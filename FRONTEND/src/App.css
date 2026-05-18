@@ -1,0 +1,125 @@
+:root {
+  --primary: #4a90e2;
+  --success: #2ecc71;
+  --danger: #e74c3c;
+  --background: #f5f7fa;
+  --card: #ffffff;
+  --text: #333333;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--background);
+  color: var(--text);
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  max-width: 700px;
+  width: 100%;
+}
+
+h1 { 
+  text-align: center; 
+  color: var(--primary); 
+}
+
+.filtro-box {
+  background: var(--card);
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+select, button {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+}
+
+button {
+  background: var(--primary);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+button:hover { 
+  background: #357abd; 
+}
+
+.card-questao {
+  background: var(--card);
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+.tag {
+  background: #e1ecf4;
+  color: #39739d;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.enunciado {
+  font-size: 18px;
+  margin: 20px 0;
+  line-height: 1.5;
+}
+
+.alternativas {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.alternativa-label {
+  padding: 12px;
+  border: 2px solid #eee;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s;
+}
+
+.alternativa-label:hover { 
+  background: #f9f9f9; 
+  border-color: var(--primary); 
+}
+
+.btn-responder { 
+  margin-top: 20px; 
+  width: 100%; 
+}
+
+.feedback {
+  margin-top: 15px;
+  padding: 15px;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+.feedback.correto { 
+  background: #d4edda; 
+  color: #155724; 
+}
+
+.feedback.errado { 
+  background: #f8d7da; 
+  color: #721c24; 
+}
