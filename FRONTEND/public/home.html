@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>English Journey</title>
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+  />
+
+</head>
+
+<body>
+
+  <!-- ===================================================== -->
+  <!-- HERO -->
+  <!-- ===================================================== -->
+
+  <header class="hero">
+
+    <nav class="navbar">
+
+      <div class="logo">
+        <i class="fa-solid fa-language"></i>
+        English Journey
+      </div>
+
+      <button
+        id="logoutButton"
+        class="secondary"
+      >
+        Sair
+      </button>
+
+    </nav>
+
+    <div class="hero-content">
+
+      <span class="tag">
+        Plataforma Inteligente de Inglês
+      </span>
+
+      <h1>
+        Domine o inglês através
+        de questões reais de vestibulares
+      </h1>
+
+      <p>
+        Estude por dificuldade,
+        vestibular, ano e categorias.
+        Evolua todos os dias.
+      </p>
+
+    </div>
+
+  </header>
+
+  <!-- ===================================================== -->
+  <!-- MAIN -->
+  <!-- ===================================================== -->
+
+  <main>
+
+    <!-- ===================================================== -->
+    <!-- FILTROS -->
+    <!-- ===================================================== -->
+
+    <section class="panel">
+
+      <div class="section-title">
+
+        <h2>
+          Filtrar Questões
+        </h2>
+
+        <p>
+          Escolha como deseja estudar
+        </p>
+
+      </div>
+
+      <div class="filters-grid">
+
+        <div class="filter-group">
+
+          <label>
+            Vestibular
+          </label>
+
+          <select id="vestibularSelect">
+
+            <option value="">
+              Todos
+            </option>
+
+            <option value="enem">
+              ENEM
+            </option>
+
+            <option value="fuvest">
+              FUVEST
+            </option>
+
+            <option value="unicamp">
+              UNICAMP
+            </option>
+
+          </select>
+
+        </div>
+
+        <div class="filter-group">
+
+          <label>
+            Dificuldade
+          </label>
+
+          <select id="dificuldadeSelect">
+
+            <option value="">
+              Todas
+            </option>
+
+            <option value="facil">
+              Fácil
+            </option>
+
+            <option value="medio">
+              Médio
+            </option>
+
+            <option value="dificil">
+              Difícil
+            </option>
+
+          </select>
+
+        </div>
+
+        <div class="filter-group">
+
+          <label>
+            Ano
+          </label>
+
+          <select id="anoSelect">
+
+            <option value="">
+              Todos
+            </option>
+
+            <option value="2025">
+              2025
+            </option>
+
+            <option value="2024">
+              2024
+            </option>
+
+            <option value="2023">
+              2023
+            </option>
+
+          </select>
+
+        </div>
+
+        <div class="filter-group">
+
+          <label>
+            Categoria
+          </label>
+
+          <select id="categoriaSelect">
+
+            <option value="">
+              Todas
+            </option>
+
+            <option value="gramatica">
+              Gramática
+            </option>
+
+            <option value="vocabulario">
+              Vocabulário
+            </option>
+
+            <option value="interpretacao">
+              Interpretação
+            </option>
+
+          </select>
+
+        </div>
+
+      </div>
+
+      <button id="buscarQuestoes">
+
+        <i class="fa-solid fa-magnifying-glass"></i>
+
+        Buscar Questões
+
+      </button>
+
+    </section>
+
+    <!-- ===================================================== -->
+    <!-- QUESTÕES -->
+    <!-- ===================================================== -->
+
+    <section class="questions-section">
+
+      <div class="questions-header">
+
+        <div>
+
+          <span class="mini-title">
+            Banco de Questões
+          </span>
+
+          <h2>
+            Questões Disponíveis
+          </h2>
+
+        </div>
+
+        <div class="question-count">
+
+          30 questões
+
+        </div>
+
+      </div>
+
+      <div
+        id="questionsContainer"
+        class="questions-grid"
+      >
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <script src="home.js"></script>
+
+</body>
+</html>
