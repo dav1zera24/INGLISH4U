@@ -1,18 +1,19 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../styles/style.css';
+import '../styles/styles.css'; // Corrigido: caminho relativo para src/styles
 
 function Login() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [mensagem, setMensagem] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const fazerLogin = async (event) => {
     event.preventDefault();
-
-    console.log('Botão clicado!');
+    setMensagem('');
+    setLoading(true);
 
     try {
       const response = await fetch(
@@ -31,38 +32,24 @@ function Login() {
 
       const dados = await response.json();
 
-      console.log(dados);
-
       if (response.ok) {
-        localStorage.setItem(
-          'jwtToken',
-          dados.token
-        );
+        localStorage.setItem('jwtToken', dados.token);
+        localStorage.setItem('usuario', JSON.stringify(dados.usuario));
 
-        localStorage.setItem(
-          'usuario',
-          JSON.stringify(dados.usuario)
-        );
-
-        setMensagem(
-          'Login realizado com sucesso!'
-        );
+        setMensagem('Login realizado com sucesso!');
 
         setTimeout(() => {
+          setLoading(false);
           navigate('/home');
-        }, 1000);
+        }, 800);
       } else {
-        setMensagem(
-          dados.erro ||
-          'Erro ao fazer login'
-        );
+        setMensagem(dados.erro || 'Erro ao fazer login');
+        setLoading(false);
       }
     } catch (error) {
       console.error(error);
-
-      setMensagem(
-        'Erro de conexão com servidor'
-      );
+      setMensagem('Erro de conexão com servidor');
+      setLoading(false);
     }
   };
 
@@ -77,48 +64,39 @@ function Login() {
         <section className="panel login-panel">
           <h2>Autenticação</h2>
 
-          <div className="message">
-            {mensagem}
-          </div>
+          {mensagem && <div className="message">{mensagem}</div>}
 
           <form onSubmit={fazerLogin}>
             <div className="form-row">
               <label>E-mail</label>
-
               <input
                 type="email"
                 value={email}
-                onChange={(e) =>
-                  setEmail(e.target.value)
-                }
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
 
             <div className="form-row">
               <label>Senha</label>
-
               <input
                 type="password"
                 value={senha}
-                onChange={(e) =>
-                  setSenha(e.target.value)
-                }
+                onChange={(e) => setSenha(e.target.value)}
                 required
               />
             </div>
 
             <div className="button-row">
-              <button type="submit">
-                Entrar
+              <button type="submit" disabled={loading}>
+                {loading ? 'Entrando...' : 'Entrar'}
               </button>
 
               <button
                 type="button"
                 className="secondary"
-                onClick={() =>
-                  navigate('/Cadastro')
-                }
+                onClick={() => navigate('/cadastro')}
+                disabled={loading}
               >
                 Criar Conta
               </button>
