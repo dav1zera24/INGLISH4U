@@ -1,0 +1,460 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+:root{
+  --bg-gradient-1: #2563eb;
+  --bg-gradient-2: #1e40af;
+  --accent-1: #3b82f6;
+  --muted: #94a3b8;
+}
+
+body{
+  font-family:'Outfit', sans-serif;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at top left, #2563eb 0%, transparent 30%),
+    radial-gradient(circle at bottom right, #1e40af 0%, transparent 35%),
+    linear-gradient(135deg, #020617, #071739, #0f172a);
+  color:white;
+  overflow-x:hidden;
+}
+
+/* ===================================================== */
+/* FUNDO ANIMADO */
+/* ===================================================== */
+
+body::before{
+  content:'';
+  position:fixed;
+  width:500px;
+  height:500px;
+  background:#2563eb;
+  filter:blur(180px);
+  opacity:0.25;
+  top:-120px;
+  left:-120px;
+  z-index:-1;
+}
+
+body::after{
+  content:'';
+  position:fixed;
+  width:450px;
+  height:450px;
+  background:#60a5fa;
+  filter:blur(180px);
+  opacity:0.15;
+  bottom:-120px;
+  right:-120px;
+  z-index:-1;
+}
+
+/* ===================================================== */
+/* HEADER / HERO */
+/* ===================================================== */
+
+.hero{
+  padding:40px 20px 60px;
+}
+
+.navbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  max-width:1200px;
+  margin:auto auto 50px;
+  padding: 0 12px;
+}
+
+.logo{
+  font-size:24px;
+  font-weight:700;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  cursor:default;
+}
+
+.hero-content{
+  max-width:900px;
+  margin:auto;
+  text-align:center;
+}
+
+.hero-content h1{
+  font-size:70px;
+  font-weight:800;
+  letter-spacing:-2px;
+  line-height:1.1;
+  margin-bottom:25px;
+  background: linear-gradient(90deg, #ffffff, #93c5fd, #60a5fa);
+  background-clip: text;
+  color: transparent;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+/* Acessibilidade: estados de foco visível */
+button:focus,
+input:focus,
+select:focus{
+  outline: 3px solid rgba(59,130,246,0.16);
+  outline-offset: 3px;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible{
+  outline: 3px solid rgba(59,130,246,0.24);
+}
+
+.hero-content p{
+  color:#cbd5e1;
+  font-size:20px;
+  font-weight:300;
+  max-width:700px;
+  margin:auto;
+}
+
+/* ===================================================== */
+/* MAIN */
+/* ===================================================== */
+
+main{
+  width:100%;
+  max-width:1200px;
+  margin:auto;
+  padding:20px;
+}
+
+/* ===================================================== */
+/* PAINÉIS / FILTROS (ÁREA DE PESQUISA) */
+/* ===================================================== */
+
+.panel{
+  background: rgba(15,23,42,0.65);
+  border: 1px solid rgba(255,255,255,0.08);
+  backdrop-filter:blur(20px);
+  border-radius:28px;
+  padding:30px;
+  margin-bottom:40px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.35);
+  transition:0.3s;
+}
+
+.filtrar-questoes {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.filtrar-questoes h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+/* Grid que organiza os 4 selects lado a lado */
+.filtros-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  width: 100%;
+}
+
+.filtros-container select {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: white;
+  padding: 16px;
+  border-radius: 16px;
+  outline: none;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+  width: 100%;
+}
+
+.filtros-container select option{
+  background: rgba(15,23,42,0.95);
+  color: #fff;
+}
+
+.filtros-container select:focus {
+  border-color: #3b82f6;
+  background: rgba(255, 255, 255, 0.09);
+  box-shadow: 0 0 0 5px rgba(59, 130, 246, 0.15);
+}
+
+.btn-buscar {
+  align-self: flex-start;
+}
+
+/* ===================================================== */
+/* INPUTS GERAIS (CADASTRO / LOGIN) */
+/* ===================================================== */
+
+.login-panel{
+  max-width:520px;
+  margin:40px auto;
+}
+
+.form-row{
+  display:flex;
+  flex-direction:column;
+  margin-bottom:22px;
+}
+
+.form-row label{
+  margin-bottom:10px;
+  color:#cbd5e1;
+  font-size:14px;
+  font-weight:500;
+}
+
+.form-row input{
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  color:white;
+  padding:16px 18px;
+  border-radius:16px;
+  outline:none;
+  font-size:15px;
+  transition:0.3s;
+}
+
+.form-row input::placeholder{
+  color:#94a3b8;
+}
+
+.form-row input:focus{
+  border-color:#3b82f6;
+  background: rgba(255,255,255,0.09);
+  box-shadow: 0 0 0 5px rgba(59,130,246,0.15);
+}
+
+/* ===================================================== */
+/* BOTÕES */
+/* ===================================================== */
+
+.button-row{
+  display:flex;
+  gap:14px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+
+button{
+  border:none;
+  border-radius:16px;
+  padding:15px 28px;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+  transition:0.3s;
+  color:white;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  box-shadow: 0 10px 25px rgba(37,99,235,0.35);
+}
+
+button:hover{
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 14px 35px rgba(37,99,235,0.45);
+}
+
+.secondary{
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow:none;
+}
+
+.secondary:hover{
+  background: rgba(255,255,255,0.12);
+}
+
+/* ===================================================== */
+/* SEÇÃO DE QUESTÕES E SEUS CARDS */
+/* ===================================================== */
+
+.questions-section{
+  margin-top:40px;
+}
+
+.questions-section h2 {
+  font-size: 32px;
+  margin-bottom: 25px;
+}
+
+.questions-grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap:25px;
+}
+
+.question-card{
+  background: rgba(15,23,42,0.8);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius:24px;
+  padding:25px;
+  transition:0.3s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 180px;
+}
+
+.question-card:hover{
+  transform: translateY(-5px);
+  border-color: rgba(96,165,250,0.3);
+}
+
+/* CABEÇALHO DO CARD (SEPARAÇÃO DO VESTIBULAR E DIFICULDADE) */
+.question-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+  width: 100%;
+}
+
+.vestibular-badge{
+  background: rgba(59,130,246,0.15);
+  color:#93c5fd;
+  padding:8px 14px;
+  border-radius:12px;
+  font-size:13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.difficulty-badge{
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* CORES DAS CATEGORIAS DE DIFICULDADE */
+.difficulty-badge.facil {
+  color: #4adf8a;
+  background: rgba(74, 223, 138, 0.1);
+}
+
+.difficulty-badge.medio {
+  color: #facc15;
+  background: rgba(250, 204, 21, 0.1);
+}
+
+.difficulty-badge.dificil {
+  color: #f87171;
+  background: rgba(248, 113, 113, 0.1);
+}
+
+.question-card h3{
+  font-size:20px;
+  line-height:1.5;
+  margin-bottom:25px;
+  font-weight: 500;
+  color: #f8fafc;
+}
+
+.question-meta{
+  display:flex;
+  justify-content:space-between;
+  color:#94a3b8;
+  margin-bottom:25px;
+  font-size: 14px;
+}
+
+.question-card button {
+  width: 100%;
+}
+
+/* ===================================================== */
+/* TABELA ALTERNATIVA (SE USADA) */
+/* ===================================================== */
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  overflow:hidden;
+  border-radius:20px;
+}
+
+thead{
+  background: rgba(255,255,255,0.06);
+}
+
+th{
+  padding:20px;
+  text-align:left;
+  color:#f8fafc;
+  font-size:14px;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:1px;
+}
+
+td{
+  padding:20px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  color:#e2e8f0;
+}
+
+tr{
+  transition:0.2s;
+}
+
+tr:hover{
+  background: rgba(255,255,255,0.03);
+}
+
+/* ===================================================== */
+/* RESPONSIVO */
+/* ===================================================== */
+
+@media (max-width: 768px) {
+  .hero-content h1{
+    font-size:42px;
+  }
+
+  .panel{
+    padding:22px;
+  }
+
+  table{
+    display:block;
+    overflow-x:auto;
+  }
+
+  .button-row{
+    flex-direction:column;
+  }
+
+  button{
+    width:100%;
+  }
+
+  .btn-buscar {
+    width: 100%;
+  }
+
+  /* reduzir efeitos visuais em telas pequenas para performance */
+  body::before, body::after{
+    width:300px;
+    height:300px;
+    filter: blur(120px);
+  }
+
+  .filtros-container select{
+    font-size:16px;
+    padding:14px;
+  }
+}
