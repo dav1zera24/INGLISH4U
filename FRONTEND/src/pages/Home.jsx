@@ -20,7 +20,7 @@ function Home() {
       const params = new URLSearchParams();
 
       if (vestibular) params.append('vestibular', vestibular);
-      if (dificuldade) params.append('dificuldade', dificuldade);
+      if (dificuldade) params.append('dificuldade', dificuldade); // Corrigido de difficulty para dificuldade
       if (ano) params.append('ano', ano);
       if (topico) params.append('topico', topico);
 
@@ -38,11 +38,11 @@ function Home() {
       const dados = await response.json();
       setQuestoes(Array.isArray(dados) ? dados : []);
     } catch (error) {
-      console.error(error);
+      console.error('Erro ao buscar questões:', error);
     }
   }
 
-  // Executa APENAS uma vez ao carregar o componente para trazer a lista inicial
+  // Executa uma vez ao carregar o componente para trazer a lista inicial
   useEffect(() => {
     if (!token) {
       navigate('/');
@@ -140,11 +140,11 @@ function Home() {
               onChange={(e) => setTopico(e.target.value)}
             >
               <option value="">Todas Categorias</option>
-              <option value="Simple Present">Simple Present</option>
-              <option value="Simple Past">Simple Past</option>
-              <option value="Present Continuous">Present Continuous</option>
-              <option value="Present Perfect">Present Perfect</option>
-              <option value="Modal Verbs / Imperative">Modal Verbs / Imperative</option>
+              <option value="Interpretação de Texto / Compreensão Geral">Interpretação de Texto / Compreensão Geral</option>
+              <option value="Vocabulário e Semântica (Sinônimos/Contexto)">Vocabulário e Semântica (Sinônimos/Contexto)</option>
+              <option value="Elementos de Coesão (Conjunções/Preposições)">Elementos de Coesão (Conjunções/Preposições)</option>
+              <option value="Gramática: Tempos Verbais (Present/Past/Perfect)">Gramática: Tempos Verbais</option>
+              <option value="Gramática: Modal Verbs & Imperative">Verbos Modais e Imperativo</option>
             </select>
           </div>
 
@@ -162,7 +162,7 @@ function Home() {
           </h2>
 
           <div className="questions-grid">
-            {Array.isArray(questoes) &&
+            {Array.isArray(questoes) && questoes.length > 0 ? (
               questoes.map((questao) => (
                 <div
                   key={questao.idq}
@@ -201,7 +201,10 @@ function Home() {
                     Resolver
                   </button>
                 </div>
-              ))}
+              ))
+            ) : (
+              <p className="no-questions">Nenhuma questão encontrada para os filtros selecionados.</p>
+            )}
           </div>
         </section>
       </main>
