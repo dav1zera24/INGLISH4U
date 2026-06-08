@@ -21,15 +21,15 @@
   --muted-light: #94a3b8;      /* Texto secundário/cinza dentro dos elementos escuros */
   
   /* Cores Temáticas de Ação */
-  --brand-blue: #2563eb;       /* Azul Royal */
-  --brand-red: #ef4444;        /* Vermelho vivo */
+  --brand-blue: #3b1bc8;       /* Azul Royal */
+  --brand-red: #c50909;        /* Vermelho vivo */
   --brand-red-hover: #dc2626;  
 }
 
 body{
   font-family:'Outfit', sans-serif;
   min-height:100vh;
-  background-color: var(--bg-app);
+  background: linear-gradient(135deg, var(--brand-blue), var(--brand-red));
   color: var(--text-dark);
   overflow-x:hidden;
 }
@@ -141,6 +141,19 @@ main{
   padding:24px;
   margin-bottom:30px;
   box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15);
+  color: var(--text-light);
+}
+
+.panel h1,
+.panel h2,
+.panel h3,
+.panel p,
+.panel span,
+.panel label,
+.panel button,
+.panel input,
+.panel select {
+  color: inherit;
 }
 
 .filtrar-questoes {
