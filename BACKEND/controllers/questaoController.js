@@ -44,9 +44,39 @@ function buildQueryParams(data) {
 
 exports.getAll = async (req, res) => {
 
+    const {
+        vestibular,
+        dificuldade,
+        ano,
+        topico
+    } = req.query;
+
+    const filters = [];
+    const values = [];
+
+    if (vestibular) {
+        values.push(vestibular);
+        filters.push(`v.nome = $${values.length}`);
+    }
+
+    if (dificuldade) {
+        values.push(dificuldade);
+        filters.push(`d.nivel = $${values.length}`);
+    }
+
+    if (ano) {
+        values.push(ano);
+        filters.push(`v.ano = $${values.length}`);
+    }
+
+    if (topico) {
+        values.push(topico);
+        filters.push(`t.t_nome = $${values.length}`);
+    }
+
     try {
 
-        const result = await pool.query(`
+        let query = `
             SELECT
                 q.*,
                 v.nome AS vestibular,
@@ -63,8 +93,15 @@ exports.getAll = async (req, res) => {
                 ON q.dificuldade_id = d.idd
             LEFT JOIN usuarios u
                 ON q.usuario_id = u.idu
-            ORDER BY q.idq
-        `);
+        `;
+
+        if (filters.length > 0) {
+            query += ` WHERE ${filters.join(' AND ')}`;
+        }
+
+        query += ` ORDER BY q.idq`;
+
+        const result = await pool.query(query, values);
 
         res.json(result.rows);
 

@@ -12,53 +12,22 @@ function Home() {
 
   const token = localStorage.getItem('jwtToken');
 
-  useEffect(() => {
-    let mounted = true;
-
-    if (!token) {
-      navigate('/');
-      return;
-    }
-
-    (async () => {
-      try {
-        const response = await fetch(
-          'http://localhost:3000/api/questoes',
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          }
-        );
-
-        const dados = await response.json();
-
-        if (mounted) {
-          setQuestoes(Array.isArray(dados) ? dados : []);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    })();
-
-    return () => {
-      mounted = false;
-    };
-  }, [navigate, token]);
-
+  // Função para buscar questões (chamada no carregamento inicial e no clique do botão)
   async function buscarQuestoes() {
-    try {
-      let url = 'http://localhost:3000/api/questoes';
+    if (!token) return;
 
-      if (topico) {
-        url = `http://localhost:3000/api/questoes/topico/${encodeURIComponent(topico)}`;
-      } else if (vestibular) {
-        url = `http://localhost:3000/api/questoes/vestibular/${encodeURIComponent(vestibular)}`;
-      } else if (dificuldade) {
-        url = `http://localhost:3000/api/questoes/dificuldade/${encodeURIComponent(dificuldade)}`;
-      } else if (ano) {
-        url = `http://localhost:3000/api/questoes/ano/${ano}`;
-      }
+    try {
+      const params = new URLSearchParams();
+
+      if (vestibular) params.append('vestibular', vestibular);
+      if (dificuldade) params.append('dificuldade', dificuldade);
+      if (ano) params.append('ano', ano);
+      if (topico) params.append('topico', topico);
+
+      const queryString = params.toString();
+      const url = queryString
+        ? `http://localhost:3000/api/questoes?${queryString}`
+        : 'http://localhost:3000/api/questoes';
 
       const response = await fetch(url, {
         headers: {
@@ -67,16 +36,22 @@ function Home() {
       });
 
       const dados = await response.json();
-
-      setQuestoes(
-        Array.isArray(dados)
-          ? dados
-          : []
-      );
+      setQuestoes(Array.isArray(dados) ? dados : []);
     } catch (error) {
       console.error(error);
     }
   }
+
+  // Executa APENAS uma vez ao carregar o componente para trazer a lista inicial
+  useEffect(() => {
+    if (!token) {
+      navigate('/');
+      return;
+    }
+
+    buscarQuestoes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [navigate, token]);
 
   function logout() {
     localStorage.removeItem('jwtToken');
@@ -91,7 +66,6 @@ function Home() {
             English4U
           </div>
           
-          {/* CONTAINER DE BOTÕES DA NAVBAR */}
           <div className="nav-actions">
             <button
               className="secondary btn-nav"
@@ -119,7 +93,6 @@ function Home() {
       </header>
 
       <main>
-        {/* ÁREA DE FILTROS REESTRUTURADA */}
         <section className="panel filtrar-questoes">
           <h2>
             Filtrar Questões
@@ -183,7 +156,6 @@ function Home() {
           </button>
         </section>
 
-        {/* SEÇÃO DE QUESTÕES */}
         <section className="questions-section">
           <h2>
             Questões ({questoes.length})
@@ -196,7 +168,6 @@ function Home() {
                   key={questao.idq}
                   className="question-card"
                 >
-                  {/* CABEÇALHO DO CARD SEPARANDO OS ELEMENTOS */}
                   <div className="question-header">
                     <span className="vestibular-badge">
                       {questao.vestibular}
@@ -235,7 +206,6 @@ function Home() {
         </section>
       </main>
 
-      {/* FOOTER SIMPLIFICADO E CENTRALIZADO */}
       <footer className="main-footer">
         <div className="footer-content">
           <p>&copy; {new Date().getFullYear()} English4U. Todos os direitos reservados.</p>
