@@ -1,108 +1,31 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import '../styles/styles.css'; 
+import { Routes, Route } from 'react-router-dom';
 
-function Login() {
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
-  const [mensagem, setMensagem] = useState('');
-  const [loading, setLoading] = useState(false);
+// Importando todas as páginas do seu sistema
+import Login from './pages/Login.jsx'; 
+import Home from './pages/Home.jsx';
+import Cadastro from './pages/Cadastro.jsx'; 
+import Questao from './pages/Questao.jsx';
+import Sobre from './pages/Sobre.jsx'; // A página do grupo Men's Caves
 
-  const navigate = useNavigate();
-
-  const fazerLogin = async (event) => {
-    event.preventDefault();
-    setMensagem('');
-    setLoading(true);
-
-    try {
-      const response = await fetch(
-        'http://localhost:3000/auth/login',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email,
-            senha,
-          }),
-        }
-      );
-
-      const dados = await response.json();
-
-      if (response.ok) {
-        localStorage.setItem('jwtToken', dados.token);
-        localStorage.setItem('usuario', JSON.stringify(dados.usuario));
-
-        setMensagem('Login realizado com sucesso!');
-
-        setTimeout(() => {
-          setLoading(false);
-          navigate('/home');
-        }, 800);
-      } else {
-        setMensagem(dados.erro || 'Erro ao fazer login');
-        setLoading(false);
-      }
-    } catch (error) {
-      console.error(error);
-      setMensagem('Erro de conexão com servidor');
-      setLoading(false);
-    }
-  };
-
+function App() {
   return (
-    <div className="login-container">
-      <section className="login-panel">
-        {/* Títulos movidos para dentro do painel escuro */}
-        <h2>Login</h2>
-        <p className="subtitle">Faça login para acessar a home.</p>
+    <Routes>
+      {/* Raiz do site mostra o Login */}
+      <Route path="/" element={<Login />} />
+      
+      {/* Rota para a Home */}
+      <Route path="/home" element={<Home />} />
+      
+      {/* Rota para o Cadastro */}
+      <Route path="/cadastro" element={<Cadastro />} />
 
-        {mensagem && <div className="message" style={{ color: 'var(--brand-red)', marginBottom: '16px', fontSize: '14px', fontWeight: '600' }}>{mensagem}</div>}
+      {/* Rota para a tela de uma Questão específica */}
+      <Route path="/questao/:id" element={<Questao />} />
 
-        <form onSubmit={fazerLogin}>
-          <div className="form-row">
-            <label>E-mail</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              placeholder="seu@email.com"
-            />
-          </div>
-
-          <div className="form-row">
-            <label>Senha</label>
-            <input
-              type="password"
-              value={senha}
-              onChange={(e) => setSenha(e.target.value)}
-              required
-              placeholder="••••••••"
-            />
-          </div>
-
-          <div className="button-row">
-            <button type="submit" disabled={loading}>
-              {loading ? 'Entrando...' : 'Entrar'}
-            </button>
-
-            <button
-              type="button"
-              className="secondary"
-              onClick={() => navigate('/cadastro')}
-              disabled={loading}
-            >
-              Criar Conta
-            </button>
-          </div>
-        </form>
-      </section>
-    </div>
+      {/* Rota para a página Sobre do Men's Caves */}
+      <Route path="/sobre" element={<Sobre />} />
+    </Routes>
   );
 }
 
-export default Login;
+export default App;

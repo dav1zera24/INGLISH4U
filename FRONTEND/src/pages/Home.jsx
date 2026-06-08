@@ -84,18 +84,28 @@ function Home() {
   }
 
   return (
-    <>
+    <div className="app-container">
       <header className="hero">
         <nav className="navbar">
           <div className="logo">
             English4U
           </div>
-          <button
-            className="secondary"
-            onClick={logout}
-          >
-            Sair
-          </button>
+          
+          {/* CONTAINER DE BOTÕES DA NAVBAR */}
+          <div className="nav-actions">
+            <button
+              className="secondary btn-nav"
+              onClick={() => navigate('/sobre')}
+            >
+              Sobre
+            </button>
+            <button
+              className="secondary btn-nav btn-sair"
+              onClick={logout}
+            >
+              Sair
+            </button>
+          </div>
         </nav>
 
         <div className="hero-content">
@@ -224,7 +234,14 @@ function Home() {
           </div>
         </section>
       </main>
-    </>
+
+      {/* FOOTER SIMPLIFICADO E CENTRALIZADO */}
+      <footer className="main-footer">
+        <div className="footer-content">
+          <p>&copy; {new Date().getFullYear()} English4U. Todos os direitos reservados.</p>
+        </div>
+      </footer>
+    </div>
   );
 }
 

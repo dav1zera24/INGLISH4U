@@ -35,6 +35,16 @@ body{
 }
 
 /* ===================================================== */
+/* COMPORTAMENTO DO CONTAINER DA PÁGINA */
+/* ===================================================== */
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ===================================================== */
 /* HEADER / NAVBAR (MUDADO PARA ESCURO/PRETO) */
 /* ===================================================== */
 
@@ -72,6 +82,12 @@ body{
   border-radius: 4px;
 }
 
+.nav-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
 .hero-content{
   max-width:900px;
   margin:auto;
@@ -94,6 +110,14 @@ body{
   max-width:700px;
 }
 
+/* Ajuste específico para os botões da barra de navegação superior */
+.btn-nav {
+  padding: 8px 16px !important;
+  width: auto !important;
+  font-size: 14px !important;
+  flex-shrink: 0;
+}
+
 /* ===================================================== */
 /* MAIN / ESTRUTURA */
 /* ===================================================== */
@@ -103,6 +127,7 @@ main{
   max-width:1200px;
   margin:40px auto;
   padding:0 20px;
+  flex: 1; /* Faz o conteúdo esticar e empurrar o footer para baixo */
 }
 
 /* ===================================================== */
@@ -165,29 +190,47 @@ main{
 }
 
 /* ===================================================== */
-/* ESTRUTURA DA TELA DE LOGIN (CORREÇÃO DE ALINHAMENTO) */
+/* ESTRUTURA DA TELA DE LOGIN (CORRIGIDO PARA ASSETS)    */
 /* ===================================================== */
 
-/* Container para centralizar verticalmente e horizontalmente na tela */
 .login-container {
-  min-height: calc(100vh - 240px); 
+  min-height: 100vh; /* Ocupa a tela inteira no login */
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 20px;
+  
+  /* CAMINHO CORRIGIDO: Agora aponta para a nova pasta assets/imgs */
+  background-image: url('../assets/imgs/ingles.png'); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
 }
 
-.login-panel{
+/* Camada escura por cima da imagem para dar contraste e o card não sumir */
+.login-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  max-width:460px;
+  height: 100%;
+  background-color: rgba(15, 23, 42, 0.75); /* Preto azulado com opacidade */
+  z-index: 1;
+}
+
+.login-panel {
+  width: 100%;
+  max-width: 460px;
   background: var(--bg-panel);
   border: 1px solid var(--border-dark);
-  border-radius:12px;
+  border-radius: 12px;
   padding: 32px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+  z-index: 2; /* Garante que o card fique acima do efeito escuro */
 }
 
-/* Títulos ajustados para dentro do card preto */
 .login-panel h2 {
   font-size: 26px;
   font-weight: 800;
@@ -282,7 +325,6 @@ button:active{
   border-color: var(--muted-light);
 }
 
-/* Acessibilidade de Foco */
 button:focus,
 input:focus,
 select:focus{
@@ -329,7 +371,6 @@ select:focus{
   transform: none;
 }
 
-/* CABEÇALHO DO CARD */
 .question-header{
   display:flex;
   justify-content:space-between;
@@ -360,7 +401,6 @@ select:focus{
 .difficulty-badge.medio { color: #f59e0b; }
 .difficulty-badge.dificil { color: var(--brand-red); }
 
-/* Texto do Enunciado */
 .question-card h3{
   font-size: 16px;
   line-height: 1.6;
@@ -369,7 +409,6 @@ select:focus{
   color: var(--text-reading);
 }
 
-/* Destaque de palavras em inglês */
 .keyword-highlight {
   border-bottom: 1px dashed var(--brand-red);
   color: var(--text-light);
@@ -430,6 +469,29 @@ tr:hover td{
 }
 
 /* ===================================================== */
+/* MAIN FOOTER (RODAPÉ ESCURO CENTRALIZADO) */
+/* ===================================================== */
+
+.main-footer {
+  background: var(--bg-panel);
+  border-top: 1px solid var(--border-dark);
+  padding: 24px 20px;
+  width: 100%;
+  margin-top: 50px;
+}
+
+.footer-content {
+  max-width: 1160px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--muted-light);
+  font-size: 14px;
+  text-align: center;
+}
+
+/* ===================================================== */
 /* RESPONSIVO */
 /* ===================================================== */
 
@@ -451,12 +513,117 @@ tr:hover td{
     flex-direction:column;
   }
 
-  button, .btn-buscar {
+  /* Aplica largura total para botões, EXCETO os botões de navegação superior */
+  button:not(.btn-nav), .btn-buscar {
     width: 100%;
   }
 
   .filtros-container select{
     font-size:15px;
     padding:12px;
+  }
+}
+
+@media (max-width: 640px) {
+  .footer-content {
+    gap: 12px;
+  }
+}
+
+/* ===================================================== */
+/* PÁGINA SOBRE - GRUPO MEN'S CAVES                      */
+/* ===================================================== */
+
+.about-panel {
+  padding: 40px;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 40px;
+  align-items: center;
+}
+
+.about-text {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.about-badge {
+  align-self: flex-start;
+  background: rgba(37, 99, 235, 0.15);
+  color: #93c5fd;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.about-text h2 {
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--text-light);
+}
+
+.about-text p {
+  color: var(--text-reading);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.about-text strong {
+  color: var(--brand-red);
+}
+
+.about-features {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.feature-item {
+  color: var(--muted-light);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* Container da Foto */
+.about-image-container {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border-dark);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.about-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+.image-overlay-title {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background: linear-gradient(transparent, rgba(15, 23, 42, 0.9));
+  color: white;
+  padding: 15px;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* Responsividade Celular */
+@media (max-width: 900px) {
+  .about-grid {
+    grid-template-columns: 1fr;
+  }
+  .about-image-container {
+    order: -1; /* Foto aparece antes do texto no celular */
   }
 }
