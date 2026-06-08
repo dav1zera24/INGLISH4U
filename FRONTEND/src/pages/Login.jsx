@@ -54,57 +54,66 @@ function Login() {
   };
 
   return (
-    <>
-      <header>
-        <h1>Login</h1>
-        <p>Faça login para acessar a home.</p>
-      </header>
+    <div className="login-container">
+      <section className="login-panel">
+        {/* Títulos movidos para dentro do painel escuro */}
+        <h2>Autenticação</h2>
+        <p className="subtitle">Faça login para acessar a home.</p>
 
-      <main>
-        <section className="panel login-panel">
-          <h2>Autenticação</h2>
+        {mensagem && (
+          <div 
+            className="message" 
+            style={{ 
+              color: 'var(--brand-red)', 
+              marginBottom: '16px', 
+              fontSize: '14px', 
+              fontWeight: '600' 
+            }}
+          >
+            {mensagem}
+          </div>
+        )}
 
-          {mensagem && <div className="message">{mensagem}</div>}
+        <form onSubmit={fazerLogin}>
+          <div className="form-row">
+            <label>E-mail</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              placeholder="seu@email.com"
+            />
+          </div>
 
-          <form onSubmit={fazerLogin}>
-            <div className="form-row">
-              <label>E-mail</label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
+          <div className="form-row">
+            <label>Senha</label>
+            <input
+              type="password"
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+              required
+              placeholder="••••••••"
+            />
+          </div>
 
-            <div className="form-row">
-              <label>Senha</label>
-              <input
-                type="password"
-                value={senha}
-                onChange={(e) => setSenha(e.target.value)}
-                required
-              />
-            </div>
+          <div className="button-row">
+            <button type="submit" disabled={loading}>
+              {loading ? 'Entrando...' : 'Entrar'}
+            </button>
 
-            <div className="button-row">
-              <button type="submit" disabled={loading}>
-                {loading ? 'Entrando...' : 'Entrar'}
-              </button>
-
-              <button
-                type="button"
-                className="secondary"
-                onClick={() => navigate('/cadastro')}
-                disabled={loading}
-              >
-                Criar Conta
-              </button>
-            </div>
-          </form>
-        </section>
-      </main>
-    </>
+            <button
+              type="button"
+              className="secondary"
+              onClick={() => navigate('/cadastro')}
+              disabled={loading}
+            >
+              Criar Conta
+            </button>
+          </div>
+        </form>
+      </section>
+    </div>
   );
 }
 
