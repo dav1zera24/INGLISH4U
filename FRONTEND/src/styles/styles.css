@@ -343,7 +343,7 @@ select:focus{
 .questions-section h2 {
   font-size: 24px;
   margin-bottom: 20px;
-  color: var(--text-dark); 
+  color: var(--text-light);
 }
 
 .questions-grid{
