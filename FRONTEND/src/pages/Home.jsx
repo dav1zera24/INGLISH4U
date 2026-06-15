@@ -121,7 +121,8 @@ function Home() {
               <option value="FUVEST">FUVEST</option>
               <option value="UNICAMP">UNICAMP</option>
               <option value="UNESP">UNESP</option>
-              <option value="ALBERT EINSTEIN">ALBERT EINSTEIN</option>
+              <option value="UNEB">UNEB</option>
+              <option value="UNEMAT">UNEMAT</option>
             </select>
 
             <select
