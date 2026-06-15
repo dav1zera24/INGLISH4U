@@ -12,7 +12,7 @@ function Home() {
 
   const token = localStorage.getItem('jwtToken');
 
-  // Função para buscar questões (chamada no carregamento inicial e no clique do botão)
+  // Função para buscar questões (chamada no clique do botão com os filtros)
   async function buscarQuestoes() {
     if (!token) return;
 
@@ -49,8 +49,21 @@ function Home() {
       return;
     }
 
-    buscarQuestoes();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    async function carregarInicial() {
+      try {
+        const response = await fetch('http://localhost:3000/api/questoes', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+        const dados = await response.json();
+        setQuestoes(Array.isArray(dados) ? dados : []);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    carregarInicial();
   }, [navigate, token]);
 
   function logout() {
