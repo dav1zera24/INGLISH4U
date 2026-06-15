@@ -132,7 +132,7 @@ exports.buscarPorVestibular = async (req, res) => {
             SELECT *
             FROM vw_questoes
             WHERE unaccent(UPPER(vestibular))
-                = unaccent(UPPER($1))
+                LIKE '%' || unaccent(UPPER($1)) || '%'
             ORDER BY idq
         `, [vestibular]);
 
