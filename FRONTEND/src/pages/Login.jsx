@@ -6,6 +6,7 @@ function Login() {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [mensagem, setMensagem] = useState('');
+  const [tipoMensagem, setTipoMensagem] = useState(''); // 'sucesso' ou 'erro'
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -37,6 +38,7 @@ function Login() {
         localStorage.setItem('usuario', JSON.stringify(dados.usuario));
 
         setMensagem('Login realizado com sucesso!');
+        setTipoMensagem('sucesso');
 
         setTimeout(() => {
           setLoading(false);
@@ -44,11 +46,13 @@ function Login() {
         }, 800);
       } else {
         setMensagem(dados.erro || 'Erro ao fazer login');
+        setTipoMensagem('erro');
         setLoading(false);
       }
     } catch (error) {
       console.error(error);
       setMensagem('Erro de conexão com servidor');
+      setTipoMensagem('erro');
       setLoading(false);
     }
   };
@@ -64,7 +68,7 @@ function Login() {
           <div 
             className="message" 
             style={{ 
-              color: 'var(--brand-red)', 
+              color: tipoMensagem === 'sucesso' ? '#22c55e' : 'var(--brand-red)', 
               marginBottom: '16px', 
               fontSize: '14px', 
               fontWeight: '600' 
