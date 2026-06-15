@@ -144,9 +144,20 @@ function Questao() {
             {questao.conteudo_complementar && (
               <>
                 <h3>Conteúdo Complementar</h3>
-                <p style={{ marginTop: '8px', color: '#ccc' }}>
+                <a 
+                  href={questao.conteudo_complementar} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  style={{ 
+                    display: 'inline-block', 
+                    marginTop: '8px', 
+                    color: '#007bff', 
+                    textDecoration: 'underline',
+                    wordBreak: 'break-all' // Garante que links muito grandes não quebrem o layout horizontalmente
+                  }}
+                >
                   {questao.conteudo_complementar}
-                </p>
+                </a>
               </>
             )}
           </div>
