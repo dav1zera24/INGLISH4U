@@ -154,7 +154,6 @@ function Home() {
               <option value="Vocabulário e Semântica (Sinônimos/Contexto)">Vocabulário e Semântica (Sinônimos/Contexto)</option>
               <option value="Elementos de Coesão (Conjunções/Preposições)">Elementos de Coesão (Conjunções/Preposições)</option>
               <option value="Gramática: Tempos Verbais (Present/Past/Perfect)">Gramática: Tempos Verbais</option>
-              <option value="Gramática: Modal Verbs & Imperative">Verbos Modais e Imperativo</option>
             </select>
           </div>
 
