@@ -26,12 +26,32 @@
   --brand-red-hover: #dc2626;  
 }
 
-body{
-  font-family:'Outfit', sans-serif;
-  min-height:100vh;
-  background: linear-gradient(135deg, var(--brand-blue), var(--brand-red));
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
   color: var(--text-dark);
-  overflow-x:hidden;
+  overflow-x: hidden;
+
+  --eua-blue: #3C3B6E;
+  --eua-red: #B22234;
+  --eua-white: #FFFFFF;
+
+  background:
+    linear-gradient(var(--eua-blue), var(--eua-blue)) 0 0 / 40% 53.8% no-repeat,
+    repeating-linear-gradient(
+      to bottom,
+      var(--eua-red),
+      var(--eua-red) 7.69%,
+      var(--eua-white) 7.69%,
+      var(--eua-white) 15.38%
+    );
+  background-attachment: fixed;
 }
 
 /* ===================================================== */
