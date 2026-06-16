@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 // Novo caminho apontando para a pasta assets/imgs
-import fotoGrupo from '../assets/imgs/grupo.png'; 
+import fotoGrupo from '../assets/imgs/grupo.jpg'; 
 
 function Sobre() {
   const navigate = useNavigate();
