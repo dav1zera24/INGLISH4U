@@ -117,6 +117,232 @@ exports.getAll = async (req, res) => {
 
 };
 
+// ======================================================
+// GET BY ID
+// ======================================================
+
+exports.getById = async (req, res) => {
+
+    const { id } = req.params;
+
+    try {
+
+        const result = await pool.query(`
+            SELECT
+                q.*,
+                v.nome AS vestibular,
+                v.ano,
+                t.t_nome AS topico,
+                d.nivel AS dificuldade,
+                u.nome AS usuario
+            FROM questoes q
+            LEFT JOIN vestibulares v
+                ON q.vestibular_id = v.idv
+            LEFT JOIN topicos t
+                ON q.topico_id = t.idt
+            LEFT JOIN dificuldade d
+                ON q.dificuldade_id = d.idd
+            LEFT JOIN usuarios u
+                ON q.usuario_id = u.idu
+            WHERE q.idq = $1
+        `, [id]);
+
+        if (result.rows.length === 0) {
+
+            return res.status(404).json({
+                error: 'Questão não encontrada.'
+            });
+
+        }
+
+        res.json(result.rows[0]);
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            error: err.message
+        });
+
+    }
+
+};
+
+// ======================================================
+// CREATE
+// ======================================================
+
+exports.createQuestao = async (req, res) => {
+
+    const body = req.body;
+
+    const queryData =
+        buildQueryParams(body);
+
+    if (!queryData) {
+
+        return res.status(400).json({
+            error: 'Nenhum campo válido enviado.'
+        });
+
+    }
+
+    const idxResposta =
+        queryData.columns.indexOf(
+            'resposta_correta'
+        );
+
+    if (
+        idxResposta !== -1 &&
+        typeof queryData.values[idxResposta] === 'string'
+    ) {
+
+        queryData.values[idxResposta] =
+            queryData.values[idxResposta]
+                .toUpperCase();
+
+    }
+
+    const query = `
+        INSERT INTO questoes (
+            ${queryData.columns.join(', ')}
+        )
+        VALUES (
+            ${queryData.placeholders.join(', ')}
+        )
+        RETURNING *
+    `;
+
+    try {
+
+        const result =
+            await pool.query(
+                query,
+                queryData.values
+            );
+
+        res.status(201)
+            .json(result.rows[0]);
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            error: err.message
+        });
+
+    }
+
+};
+
+// ======================================================
+// UPDATE
+// ======================================================
+
+exports.updateQuestao = async (req, res) => {
+
+    const { id } = req.params;
+
+    const body = req.body;
+
+    const queryData =
+        buildQueryParams(body);
+
+    if (!queryData) {
+
+        return res.status(400).json({
+            error: 'Nenhum campo válido enviado.'
+        });
+
+    }
+
+    const setClause =
+        queryData.columns
+            .map(
+                (column, index) =>
+                    `${column} = $${index + 1}`
+            )
+            .join(', ');
+
+    const query = `
+        UPDATE questoes
+        SET ${setClause}
+        WHERE idq = $${queryData.values.length + 1}
+        RETURNING *
+    `;
+
+    try {
+
+        const result =
+            await pool.query(
+                query,
+                [...queryData.values, id]
+            );
+
+        if (result.rows.length === 0) {
+
+            return res.status(404).json({
+                error: 'Questão não encontrada.'
+            });
+
+        }
+
+        res.json(result.rows[0]);
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            error: err.message
+        });
+
+    }
+
+};
+
+// ======================================================
+// DELETE
+// ======================================================
+
+exports.deleteQuestao = async (req, res) => {
+
+    const { id } = req.params;
+
+    try {
+
+        const result = await pool.query(`
+            DELETE FROM questoes
+            WHERE idq = $1
+            RETURNING *
+        `, [id]);
+
+        if (result.rows.length === 0) {
+
+            return res.status(404).json({
+                error: 'Questão não encontrada.'
+            });
+
+        }
+
+        res.json({
+            message: 'Questão deletada com sucesso.',
+            questao: result.rows[0]
+        });
+
+    } catch (err) {
+
+        console.error(err);
+
+        res.status(500).json({
+            error: err.message
+        });
+
+    }
+
+};
 
 // ======================================================
 // BUSCAR POR VESTIBULAR
@@ -132,7 +358,7 @@ exports.buscarPorVestibular = async (req, res) => {
             SELECT *
             FROM vw_questoes
             WHERE unaccent(UPPER(vestibular))
-                LIKE '%' || unaccent(UPPER($1)) || '%'
+                = unaccent(UPPER($1))
             ORDER BY idq
         `, [vestibular]);
 
@@ -305,4 +531,6 @@ exports.verificarResposta = async (req, res) => {
     }
 
 };
+
+
 
