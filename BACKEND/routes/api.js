@@ -33,3 +33,5 @@ router.post('/questoes/verificar', questaoController.verificarResposta);
 router.get('/questoes/ano/:ano', questaoController.buscarPorAno);
 
 module.exports = router;
+
+
