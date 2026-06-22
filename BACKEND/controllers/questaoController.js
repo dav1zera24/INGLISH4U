@@ -1,6 +1,7 @@
-
+// Importa o pool de conexões do banco de dados configurado previamente
 const pool = require('../config/database');
 
+// Lista de colunas permitidas (Whitelist) para blindar o banco de dados contra campos inválidos (usado em INSERT e UPDATE)
 const allowedColumns = [
     'enunciado',
     'alternativa_a',
@@ -17,20 +18,26 @@ const allowedColumns = [
     'imagem_url'
 ];
 
+// Função utilitária para montar os parâmetros das queries SQL (INSERT e UPDATE) dinamicamente
 function buildQueryParams(data) {
 
+    // Filtra as chaves do objeto recebido (req.body), mantendo apenas as que estão na lista allowedColumns
     const columns = Object.keys(data).filter((field) =>
         allowedColumns.includes(field)
     );
 
+    // Se o objeto não contiver nenhuma coluna válida, retorna null
     if (columns.length === 0) return null;
 
+    // Mapeia e extrai os valores correspondentes às colunas filtradas
     const values = columns.map((field) => data[field]);
 
+    // Cria os placeholders numéricos do PostgreSQL ($1, $2, $3...) com base na quantidade de colunas
     const placeholders = columns.map(
         (_, index) => `$${index + 1}`
     );
 
+    // Retorna as colunas estruturadas, seus valores e os placeholders correspondentes
     return {
         columns,
         values,
@@ -39,11 +46,11 @@ function buildQueryParams(data) {
 }
 
 // ======================================================
-// GET ALL
+// GET ALL (Buscar todas as questões com filtros opcionais usando a VIEW)
 // ======================================================
-
 exports.getAll = async (req, res) => {
 
+    // Desestrutura os filtros opcionais enviados via Query Params (?vestibular=...&ano=...)
     const {
         vestibular,
         dificuldade,
@@ -51,157 +58,113 @@ exports.getAll = async (req, res) => {
         topico
     } = req.query;
 
-    const filters = [];
-    const values = [];
+    const filters = []; // Armazena as strings das cláusulas WHERE (ex: "vestibular = $1")
+    const values = [];  // Armazena os valores reais que substituirão os placeholders
 
+    // Usamos diretamente os nomes das colunas mapeadas e tratadas pela VIEW
     if (vestibular) {
         values.push(vestibular);
-        filters.push(`v.nome = $${values.length}`);
+        filters.push(`vestibular = $${values.length}`);
     }
 
     if (dificuldade) {
         values.push(dificuldade);
-        filters.push(`d.nivel = $${values.length}`);
+        filters.push(`dificuldade = $${values.length}`);
     }
 
     if (ano) {
         values.push(ano);
-        filters.push(`v.ano = $${values.length}`);
+        filters.push(`ano = $${values.length}`);
     }
 
     if (topico) {
         values.push(topico);
-        filters.push(`t.t_nome = $${values.length}`);
+        filters.push(`topico = $${values.length}`);
     }
 
     try {
+        // Query base apontando diretamente para a nossa View limpa, sem repetição de JOINs
+        let query = `SELECT * FROM vw_questoes`;
 
-        let query = `
-            SELECT
-                q.*,
-                v.nome AS vestibular,
-                v.ano,
-                t.t_nome AS topico,
-                d.nivel AS dificuldade,
-                u.nome AS usuario
-            FROM questoes q
-            LEFT JOIN vestibulares v
-                ON q.vestibular_id = v.idv
-            LEFT JOIN topicos t
-                ON q.topico_id = t.idt
-            LEFT JOIN dificuldade d
-                ON q.dificuldade_id = d.idd
-            LEFT JOIN usuarios u
-                ON q.usuario_id = u.idu
-        `;
-
+        // Se houver algum filtro preenchido, concatena a cláusula WHERE juntando-os com "AND"
         if (filters.length > 0) {
             query += ` WHERE ${filters.join(' AND ')}`;
         }
 
-        query += ` ORDER BY q.idq`;
+        // Ordena o resultado pelo ID da questão de forma crescente
+        query += ` ORDER BY idq`;
 
+        // Executa a query montada passando o array de valores correspondente
         const result = await pool.query(query, values);
 
+        // Retorna a lista de questões encontrada em formato JSON
         res.json(result.rows);
 
     } catch (err) {
-
         console.error(err);
-
         res.status(500).json({
             error: err.message
         });
-
     }
-
 };
 
 // ======================================================
-// GET BY ID
+// GET BY ID (Buscar uma única questão pelo ID usando a VIEW)
 // ======================================================
-
 exports.getById = async (req, res) => {
 
+    // Captura o ID diretamente dos parâmetros da URL (Path Params)
     const { id } = req.params;
 
     try {
-
+        // Consulta simplificada direto na View, eliminando o bloco massivo de JOINs repetidos
         const result = await pool.query(`
-            SELECT
-                q.*,
-                v.nome AS vestibular,
-                v.ano,
-                t.t_nome AS topico,
-                d.nivel AS dificuldade,
-                u.nome AS usuario
-            FROM questoes q
-            LEFT JOIN vestibulares v
-                ON q.vestibular_id = v.idv
-            LEFT JOIN topicos t
-                ON q.topico_id = t.idt
-            LEFT JOIN dificuldade d
-                ON q.dificuldade_id = d.idd
-            LEFT JOIN usuarios u
-                ON q.usuario_id = u.idu
-            WHERE q.idq = $1
+            SELECT * FROM vw_questoes 
+            WHERE idq = $1
         `, [id]);
 
+        // Se o banco de dados não retornar nenhuma linha, significa que o ID não existe
         if (result.rows.length === 0) {
-
             return res.status(404).json({
                 error: 'Questão não encontrada.'
             });
-
         }
 
+        // Retorna apenas o objeto da primeira linha encontrada
         res.json(result.rows[0]);
 
     } catch (err) {
-
         console.error(err);
-
         res.status(500).json({
             error: err.message
         });
-
     }
-
 };
 
 // ======================================================
-// CREATE
+// CREATE (Criar uma nova questão - Modificações sempre na tabela física)
 // ======================================================
-
 exports.createQuestao = async (req, res) => {
 
-    const body = req.body;
+    const body = req.body; // Captura os dados enviados no corpo da requisição
 
-    const queryData =
-        buildQueryParams(body);
+    // Gera as colunas, placeholders e valores válidos a partir do body
+    const queryData = buildQueryParams(body);
 
     if (!queryData) {
-
         return res.status(400).json({
             error: 'Nenhum campo válido enviado.'
         });
-
     }
 
-    const idxResposta =
-        queryData.columns.indexOf(
-            'resposta_correta'
-        );
+    const idxResposta = queryData.columns.indexOf('resposta_correta');
 
     if (
         idxResposta !== -1 &&
         typeof queryData.values[idxResposta] === 'string'
     ) {
-
         queryData.values[idxResposta] =
-            queryData.values[idxResposta]
-                .toUpperCase();
-
+            queryData.values[idxResposta].toUpperCase();
     }
 
     const query = `
@@ -215,56 +178,36 @@ exports.createQuestao = async (req, res) => {
     `;
 
     try {
-
-        const result =
-            await pool.query(
-                query,
-                queryData.values
-            );
-
-        res.status(201)
-            .json(result.rows[0]);
+        const result = await pool.query(query, queryData.values);
+        res.status(201).json(result.rows[0]);
 
     } catch (err) {
-
         console.error(err);
-
         res.status(500).json({
             error: err.message
         });
-
     }
-
 };
 
 // ======================================================
-// UPDATE
+// UPDATE (Atualizar os dados de uma questão existente na tabela física)
 // ======================================================
-
 exports.updateQuestao = async (req, res) => {
 
-    const { id } = req.params;
+    const { id } = req.params; 
+    const body = req.body;     
 
-    const body = req.body;
-
-    const queryData =
-        buildQueryParams(body);
+    const queryData = buildQueryParams(body);
 
     if (!queryData) {
-
         return res.status(400).json({
             error: 'Nenhum campo válido enviado.'
         });
-
     }
 
-    const setClause =
-        queryData.columns
-            .map(
-                (column, index) =>
-                    `${column} = $${index + 1}`
-            )
-            .join(', ');
+    const setClause = queryData.columns
+        .map((column, index) => `${column} = $${index + 1}`)
+        .join(', ');
 
     const query = `
         UPDATE questoes
@@ -274,45 +217,35 @@ exports.updateQuestao = async (req, res) => {
     `;
 
     try {
-
-        const result =
-            await pool.query(
-                query,
-                [...queryData.values, id]
-            );
+        const result = await pool.query(
+            query,
+            [...queryData.values, id]
+        );
 
         if (result.rows.length === 0) {
-
             return res.status(404).json({
                 error: 'Questão não encontrada.'
             });
-
         }
 
         res.json(result.rows[0]);
 
     } catch (err) {
-
         console.error(err);
-
         res.status(500).json({
             error: err.message
         });
-
     }
-
 };
 
 // ======================================================
-// DELETE
+// DELETE (Excluir uma questão por ID na tabela física)
 // ======================================================
-
 exports.deleteQuestao = async (req, res) => {
 
-    const { id } = req.params;
+    const { id } = req.params; 
 
     try {
-
         const result = await pool.query(`
             DELETE FROM questoes
             WHERE idq = $1
@@ -320,11 +253,9 @@ exports.deleteQuestao = async (req, res) => {
         `, [id]);
 
         if (result.rows.length === 0) {
-
             return res.status(404).json({
                 error: 'Questão não encontrada.'
             });
-
         }
 
         res.json({
@@ -333,123 +264,96 @@ exports.deleteQuestao = async (req, res) => {
         });
 
     } catch (err) {
-
         console.error(err);
-
         res.status(500).json({
             error: err.message
         });
-
     }
-
 };
 
 // ======================================================
-// BUSCAR POR VESTIBULAR
+// BUSCAR POR VESTIBULAR (Consulta filtrando por nome do vestibular na VIEW)
 // ======================================================
-
 exports.buscarPorVestibular = async (req, res) => {
 
-    const { vestibular } = req.params;
+    const { vestibular } = req.params; 
 
     try {
-
         const result = await pool.query(`
             SELECT *
             FROM vw_questoes
-            WHERE unaccent(UPPER(vestibular))
-                = unaccent(UPPER($1))
+            WHERE unaccent(UPPER(vestibular)) = unaccent(UPPER($1))
             ORDER BY idq
         `, [vestibular]);
 
         res.json(result.rows);
 
     } catch (err) {
-
         console.error(err);
-
         res.status(500).json({
             error: err.message
         });
-
     }
-
 };
 
 // ======================================================
-// BUSCAR POR DIFICULDADE
+// BUSCAR POR DIFICULDADE (Consulta filtrando pelo nível de dificuldade na VIEW)
 // ======================================================
-
 exports.buscarPorDificuldade = async (req, res) => {
 
     const { dificuldade } = req.params;
 
     try {
-
         const result = await pool.query(`
             SELECT *
             FROM vw_questoes
-            WHERE unaccent(UPPER(dificuldade))
-                = unaccent(UPPER($1))
+            WHERE unaccent(UPPER(dificuldade)) = unaccent(UPPER($1))
             ORDER BY idq
         `, [dificuldade]);
 
         res.json(result.rows);
 
     } catch (err) {
-
         console.error(err);
-
         res.status(500).json({
             error: err.message
         });
-
     }
-
 };
 
 // ======================================================
-// BUSCAR POR TÓPICO
+// BUSCAR POR TÓPICO (Consulta filtrando por tema/tópico na VIEW)
 // ======================================================
-
 exports.buscarPorTopico = async (req, res) => {
 
     const { topico } = req.params;
 
     try {
-
         const result = await pool.query(`
             SELECT *
             FROM vw_questoes
-            WHERE unaccent(UPPER(topico))
-                = unaccent(UPPER($1))
+            WHERE unaccent(UPPER(topico)) = unaccent(UPPER($1))
             ORDER BY idq
         `, [topico]);
 
         res.json(result.rows);
 
     } catch (err) {
-
         console.error(err);
-
         res.status(500).json({
             error: err.message
         });
-
     }
-
 };
 
 // ======================================================
-// BUSCAR POR ANO
+// BUSCAR POR ANO (Consulta filtrando por um ano específico na VIEW)
 // ======================================================
-
 exports.buscarPorAno = async (req, res) => {
 
-    const { ano } = req.params;
+    const { ano } = req.params; 
 
     try {
-
         const result = await pool.query(`
             SELECT *
             FROM vw_questoes
@@ -460,30 +364,21 @@ exports.buscarPorAno = async (req, res) => {
         res.json(result.rows);
 
     } catch (err) {
-
         console.error(err);
-
         res.status(500).json({
             error: err.message
         });
-
     }
-
 };
 
 // ======================================================
-// VERIFICAR RESPOSTA
+// VERIFICAR RESPOSTA (Valida se o gabarito bate com o input do usuário)
 // ======================================================
-
 exports.verificarResposta = async (req, res) => {
 
-    const {
-        idq,
-        respostaUsuario
-    } = req.body;
+    const { idq, respostaUsuario } = req.body;
 
     try {
-
         const result = await pool.query(`
             SELECT
                 resposta_correta,
@@ -494,43 +389,26 @@ exports.verificarResposta = async (req, res) => {
         `, [idq]);
 
         if (result.rows.length === 0) {
-
             return res.status(404).json({
                 error: 'Questão não encontrada.'
             });
-
         }
 
-        const questao =
-            result.rows[0];
+        const questao = result.rows[0];
 
-        const correta =
-            questao.resposta_correta
-                .trim()
-                .toUpperCase() ===
-            respostaUsuario
-                .trim()
-                .toUpperCase();
+        const correta = questao.resposta_correta.trim().toUpperCase() ===
+                        respostaUsuario.trim().toUpperCase();
 
         res.json({
             correta,
-            comentario:
-                questao.comentario,
-            conteudo_complementar:
-                questao.conteudo_complementar
+            comentario: questao.comentario,
+            conteudo_complementar: questao.conteudo_complementar
         });
 
     } catch (err) {
-
         console.error(err);
-
         res.status(500).json({
             error: err.message
         });
-
     }
-
 };
-
-
-
